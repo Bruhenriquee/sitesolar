@@ -401,30 +401,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const locationSelect = document.getElementById('location');
   const calculateSavingsButton = document.getElementById('calculate-savings-button');
   const calculatorResultsDiv = document.getElementById('calculator-results');
+  
+  // --- CONFIGURAÇÃO DA API (OPCIONAL) ---
+  const calculatorApiConfig = {
+    // Para usar a API do NREL (mais precisa), mude para 'true'. Para usar a estimativa manual (HSP), mude para 'false'.
+    useApi: true, 
+    // Cole aqui a sua chave de API gratuita obtida em: https://developer.nrel.gov/signup/
+    apiKey: "Uq9HgdkTjbqLglrCtzdsEOx2gNBCs3eOyASSFgU1", 
+  };
 
-  // Objeto de configuração para facilitar a alteração das taxas da calculadora
-  // ATUALIZE OS VALORES AQUI: Para manter a calculadora precisa, basta atualizar
-  // os valores de kwhPrice (preço da energia) e costPerKwp (custo do sistema).
+  // Objeto de configuração para as taxas da calculadora.
+  // ATUALIZE OS VALORES AQUI para manter a calculadora precisa.
   const calculatorConfig = {
     areaPerKwp: 7, // Média de metros quadrados (m²) necessários para instalar 1 kWp de painéis solares.
     systemLifespanYears: 25, // Vida útil do sistema em anos.
     rates: {
       // Valores padrão caso o estado não esteja na lista.
       default: {
-        savingsPercentage: 0.9,   // Percentual de economia desejado na conta.
+        savingsPercentage: 0.9,
         kwhPrice: 0.85,           // Preço médio do kWh em R$.
         hsp: 4.5,                 // Média de Horas de Sol Pleno (HSP) por dia.
         costPerKwp: 6000,         // Custo estimado em R$ por kWp instalado.
+        lat: -15.78,              // Latitude padrão (Brasília)
+        lon: -47.92               // Longitude padrão (Brasília)
       },
-      // Taxas específicas por estado (valores ilustrativos, ajuste conforme a realidade).
-      sp: { savingsPercentage: 0.9, kwhPrice: 0.92, hsp: 4.6, costPerKwp: 5900 },
-      rj: { savingsPercentage: 0.92, kwhPrice: 0.98, hsp: 4.8, costPerKwp: 6100 },
-      mg: { savingsPercentage: 0.9, kwhPrice: 0.88, hsp: 5.2, costPerKwp: 5800 },
-      ba: { savingsPercentage: 0.95, kwhPrice: 0.85, hsp: 5.5, costPerKwp: 5700 },
-      pr: { savingsPercentage: 0.88, kwhPrice: 0.80, hsp: 4.4, costPerKwp: 6200 },
-      rs: { savingsPercentage: 0.85, kwhPrice: 0.78, hsp: 4.2, costPerKwp: 6300 },
-      go: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850 },
-      df: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850 }
+      // Taxas e coordenadas específicas por estado (valores ilustrativos, ajuste conforme a realidade).
+      sp: { savingsPercentage: 0.9, kwhPrice: 0.92, hsp: 4.6, costPerKwp: 5900, lat: -23.55, lon: -46.63 },
+      rj: { savingsPercentage: 0.92, kwhPrice: 0.98, hsp: 4.8, costPerKwp: 6100, lat: -22.90, lon: -43.17 },
+      mg: { savingsPercentage: 0.9, kwhPrice: 0.88, hsp: 5.2, costPerKwp: 5800, lat: -19.92, lon: -43.93 },
+      ba: { savingsPercentage: 0.95, kwhPrice: 0.85, hsp: 5.5, costPerKwp: 5700, lat: -12.97, lon: -38.50 },
+      pr: { savingsPercentage: 0.88, kwhPrice: 0.80, hsp: 4.4, costPerKwp: 6200, lat: -25.42, lon: -49.27 },
+      rs: { savingsPercentage: 0.85, kwhPrice: 0.78, hsp: 4.2, costPerKwp: 6300, lat: -30.03, lon: -51.23 },
+      go: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850, lat: -16.68, lon: -49.26 },
+      df: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850, lat: -15.78, lon: -47.92 }
     }
   };
 
@@ -521,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Função principal que executa a lógica de cálculo da economia.
    * É chamada quando o usuário clica no botão "Calcular Economia".
    */
-  const calculateSavings = () => {
+  const calculateSavings = async () => {
     // 1. Coleta e converte os valores dos campos do formulário.
     const monthlyBill = parseFloat(monthlyBillInput.value) || 0;
     const propertyType = propertyTypeSelect.value;
@@ -542,29 +551,76 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Executa os cálculos com base nos parâmetros realistas.
     // a. Estima o consumo mensal de energia em kWh.
     const monthlyConsumptionKwh = monthlyBill / stateRates.kwhPrice;
-    // b. Dimensiona o sistema IDEAL (em kWp) para suprir esse consumo.
-    //    Fórmula: Consumo Mensal em kWh / (Horas de Sol Pleno por dia * 30 dias)
-    let systemSize = monthlyConsumptionKwh / (stateRates.hsp * 30);
+    let idealSystemSize;
+    let avgMonthlyGenerationPerKwp; // Variável para armazenar a geração por kWp
 
-    // c. Verifica a limitação da área do telhado. Calcula o tamanho máximo que cabe na área informada.
-    const maxSystemSizeByArea = roofArea / calculatorConfig.areaPerKwp;
+    // Tenta usar a API se estiver habilitada e a chave for fornecida
+    if (calculatorApiConfig.useApi && calculatorApiConfig.apiKey !== "YOUR_NREL_API_KEY") {
+      try {
+        console.log("Iniciando cálculo com a API PVWatts...");
+        const tiltValue = Math.abs(stateRates.lat).toFixed(1);
+        const apiUrl = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${calculatorApiConfig.apiKey}&lat=${stateRates.lat}&lon=${stateRates.lon}&system_capacity=1&azimuth=180&tilt=${tiltValue}&array_type=1&module_type=0&losses=14&dataset=intl`;
+        
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-    // d. O tamanho final do sistema é o MENOR valor entre o ideal (baseado no consumo) e o máximo (baseado na área).
-    if (systemSize > maxSystemSizeByArea) {
-      console.warn(`O sistema foi limitado pela área do telhado. Tamanho ideal: ${systemSize.toFixed(1)} kWp, Tamanho máximo pela área: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
-      systemSize = maxSystemSizeByArea;
+        if (!response.ok) {
+          const errorMessage = data.errors ? data.errors.join(', ') : `API Error: ${response.status}`;
+          throw new Error(errorMessage);
+        }
+
+        if (data.outputs && data.outputs.ac_monthly) {
+          const totalAnnualGeneration = data.outputs.ac_monthly.reduce((sum, month) => sum + month, 0);
+          avgMonthlyGenerationPerKwp = totalAnnualGeneration / 12;
+          idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
+        } else {
+          throw new Error("Resposta da API inválida.");
+        }
+      } catch (error) {
+        console.warn(`Falha ao usar a API PVWatts: ${error.message}. Usando o cálculo manual com HSP.`);
+        avgMonthlyGenerationPerKwp = stateRates.hsp * 30;
+        idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
+      }
+    } else {
+      console.log("Iniciando cálculo manual com HSP...");
+      avgMonthlyGenerationPerKwp = stateRates.hsp * 30;
+      idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
     }
 
-    // e. Calcula o investimento estimado com o tamanho final do sistema.
-    const investment = Math.ceil(systemSize) * stateRates.costPerKwp;
-    const monthlySavings = monthlyBill * stateRates.savingsPercentage;
-    const paybackYears = investment / (monthlySavings * 12);
+    const maxSystemSizeByArea = roofArea / calculatorConfig.areaPerKwp;
+
+    // d. Lógica de limitação explícita para garantir a correção.
+    let finalSystemSize;
+    let isLimitedByArea;
+
+    if (idealSystemSize > maxSystemSizeByArea) {
+      // Se o sistema ideal é MAIOR que o que cabe no telhado, o sistema é LIMITADO pela área.
+      isLimitedByArea = true;
+      finalSystemSize = maxSystemSizeByArea; // O tamanho final é o máximo que cabe.
+      console.warn(`O sistema foi limitado pela área do telhado. Tamanho ideal: ${idealSystemSize.toFixed(1)} kWp, Tamanho máximo pela área: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
+    } else {
+      // Se o sistema ideal é MENOR ou igual ao que cabe, não há limitação pela área.
+      isLimitedByArea = false;
+      finalSystemSize = idealSystemSize; // O tamanho final é o ideal.
+    }
+
+    // e. Cálculos finais baseados no tamanho de sistema realista (finalSystemSize).
+    const investment = Math.ceil(finalSystemSize) * stateRates.costPerKwp;
+    let monthlySavings = monthlyBill * stateRates.savingsPercentage;
+
+    // Se o sistema foi limitado, a economia mensal também deve ser recalculada para ser realista.
+    if (isLimitedByArea) {
+      monthlySavings = (finalSystemSize * avgMonthlyGenerationPerKwp) * stateRates.kwhPrice;
+    }
+
+    // Cálculo de payback mais seguro para evitar divisão por zero.
+    const paybackYears = (investment > 0 && monthlySavings > 0) ? investment / (monthlySavings * 12) : 0;
     const totalSavings = monthlySavings * 12 * calculatorConfig.systemLifespanYears;
 
     // 5. Atualiza o objeto de resultados com os novos valores calculados.
     currentCalculatorResults = {
       monthlySavings,
-      systemSize,
+      systemSize: finalSystemSize,
       paybackTime: paybackYears,
       investment,
       totalSavings,
