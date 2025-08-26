@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Site Demonstração</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3C!-- Fundo transparente ou de cor clara --%3Crect width='100' height='100' fill='%23FFFFFF'/%3E%3C!-- Letra S em Solar Gold --%3Cpath d='M50 10 C30 10 20 20 20 40 C20 60 30 70 50 70 C70 70 80 60 80 80 C80 90 70 90 60 90 C50 90 40 80 40 70 L40 60 C40 75 50 85 60 85 C70 85 80 75 80 55 C80 35 70 25 50 25 C30 25 20 35 20 55 L20 65' fill='none' stroke='%23F7B91D' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3C!-- Ponto de destaque em Earth Green (opcional, pode ser ajustado) --%3Ccircle cx='45' cy='45' r='5' fill='%230EBE80'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="description" content="Especialistas em energia solar no Brasil com mais de 10 anos de experiência. Instalação, manutenção e consultoria. Economia até 95% na conta de luz. Orçamento gratuito." />
+    <meta property="og:title" content="SolarTech Brasil - Energia Solar Residencial e Comercial" />
+    <meta property="og:description" content="Transforme energia solar em economia real. Mais de 5.000 projetos instalados. Orçamento gratuito e instalação em 24h." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630" />
+    <link rel="preload" href="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&fm=webp&q=85" as="image">
+
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="root" class="min-h-screen bg-white dark:bg-slate-900">
+      <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <span class="text-2xl font-bold text-solar-gold">Site</span>
+                <span class="text-2xl font-bold text-earth-green">Demonstração</span>
+              </div>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-8">
+                <button onclick="scrollToSection('inicio')" class="text-slate-700 hover:text-solar-gold px-3 py-2 text-sm font-medium transition-all duration-300 nav-link" data-testid="nav-inicio" data-section-id="inicio">
+                  Início
+                </button>
+                <button onclick="scrollToSection('sobre')" class="text-slate-700 hover:text-solar-gold px-3 py-2 text-sm font-medium transition-all duration-300 nav-link" data-testid="nav-sobre" data-section-id="sobre">
+                  Sobre
+                </button>
+                <button onclick="scrollToSection('servicos')" class="text-slate-700 hover:text-solar-gold px-3 py-2 text-sm font-medium transition-all duration-300 nav-link" data-testid="nav-servicos" data-section-id="servicos">
+                  Serviços
+                </button>
+                <button onclick="scrollToSection('projetos')" class="text-slate-700 hover:text-solar-gold px-3 py-2 text-sm font-medium transition-all duration-300 nav-link" data-testid="nav-projetos" data-section-id="projetos">
+                  Projetos
+                </button>
+                <button onclick="scrollToSection('contato')" class="text-slate-700 hover:text-solar-gold px-3 py-2 text-sm font-medium transition-all duration-300 nav-link" data-testid="nav-contato" data-section-id="contato">
+                  Contato
+                </button>
+                <button onclick="scrollToSection('orcamento')" class="bg-solar-gold text-white hover:bg-solar-gold/90 transition-all duration-300 px-4 py-2 rounded-md font-medium button-modern nav-link" data-testid="nav-orcamento" data-section-id="orcamento">
+                  Orçamento
+                </button>
+              </div>
+            </div>
+            <div class="md:hidden">
+              <button
+                id="mobile-menu-toggle"
+                class="text-slate-700 hover:text-solar-gold p-2 rounded-md"
+                data-testid="mobile-menu-toggle"
+              >
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+                <svg id="x-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden fixed top-16 left-0 right-0 shadow-lg">
+          <div class="px-2 pt-2 pb-3 space-y-1">
+            <button onclick="scrollToSection('inicio')" class="block px-3 py-2 text-base font-medium text-slate-700 hover:text-solar-gold w-full text-left transition-all duration-300 nav-link" data-testid="mobile-nav-inicio" data-section-id="inicio">
+              Início
+            </button>
+            <button onclick="scrollToSection('sobre')" class="block px-3 py-2 text-base font-medium text-slate-700 hover:text-solar-gold w-full text-left transition-all duration-300 nav-link" data-testid="mobile-nav-sobre" data-section-id="sobre">
+              Sobre
+            </button>
+            <button onclick="scrollToSection('servicos')" class="block px-3 py-2 text-base font-medium text-slate-700 hover:text-solar-gold w-full text-left transition-all duration-300 nav-link" data-testid="mobile-nav-servicos" data-section-id="servicos">
+              Serviços
+            </button>
+            <button onclick="scrollToSection('projetos')" class="block px-3 py-2 text-base font-medium text-slate-700 hover:text-solar-gold w-full text-left transition-all duration-300 nav-link" data-testid="mobile-nav-projetos" data-section-id="projetos">
+              Projetos
+            </button>
+            <button onclick="scrollToSection('contato')" class="block px-3 py-2 text-base font-medium text-slate-700 hover:text-solar-gold w-full text-left transition-all duration-300 nav-link" data-testid="mobile-nav-contato" data-section-id="contato">
+              Contato
+            </button>
+            <div class="px-3 py-2">
+              <button onclick="scrollToSection('orcamento')" class="w-full bg-solar-gold text-white hover:bg-solar-gold/90 transition-all duration-300 px-4 py-2 rounded-md font-medium button-modern nav-link" data-testid="mobile-nav-orcamento" data-section-id="orcamento">
+                Orçamento
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main>
+        <section id="inicio" class="bg-gradient-to-br from-sky-blue-light/10 to-solar-gold-light/10 min-h-screen flex items-center section-observer pt-16">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+              <div class="lg:col-span-6 fade-in">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-6">
+                  Energia Solar 
+                  <span class="text-solar-gold"> Inteligente</span> 
+                  para seu 
+                  <span class="text-earth-green"> Futuro</span>
+                </h1>
+                <p class="text-xl text-slate-600 mb-8 leading-relaxed">
+                  Economize até 95% na conta de luz com nossos sistemas fotovoltaicos. 
+                  Instalação profissional, garantia total e retorno do investimento em até 5 anos.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                  <button onclick="scrollToSection('orcamento')" size="lg" class="bg-solar-gold text-white hover:bg-solar-gold/90 transform hover:scale-105 shadow-lg text-lg px-8 py-4 transition-all duration-300 rounded-md font-medium button-modern" data-testid="button-calcular-economia">
+                    Calcular Economia
+                  </button>
+                  <button onclick="scrollToSection('sobre')" variant="outline" size="lg" class="border-2 border-earth-green text-earth-green hover:bg-earth-green hover:text-white text-lg px-8 py-4 transition-all duration-300 rounded-md font-medium button-modern" data-testid="button-saiba-mais">
+                    Saiba Mais
+                  </button>
+                </div>
+                <div class="flex items-center gap-6 text-sm text-slate-600">
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-earth-green"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Instalação em 24h</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-earth-green"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Garantia de 25 anos</span>
+                  </div>
+                </div>
+              </div>
+              <div class="lg:col-span-6 mt-12 lg:mt-0 fade-in">
+                <img 
+                  src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&fm=webp&q=85" 
+                  alt="Instalação de painéis solares fotovoltaicos em telhado residencial, mostrando tecnologia moderna e sustentável de energia solar" 
+                  class="rounded-2xl shadow-2xl w-full h-auto optimized-image"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sobre" class="py-24 bg-white section-observer">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
+              <div class="lg:col-span-6 mb-12 lg:mb-0 fade-in">
+                <img 
+                  src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600&fm=webp&q=80" 
+                  alt="Equipe especializada de técnicos da SolarTech Brasil instalando sistema fotovoltaico, demonstrando qualidade profissional e segurança" 
+                  class="rounded-2xl shadow-lg w-full h-auto optimized-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="lg:col-span-6 fade-in">
+                <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                  Líderes em <span class="text-solar-gold">Energia Solar</span> no Brasil
+                </h2>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                  Com mais de 10 anos de experiência, a SolarTech Brasil já instalou mais de 5.000 sistemas 
+                  fotovoltaicos em todo o país. Nossa missão é democratizar o acesso à energia limpa e 
+                  renovável, proporcionando economia real e sustentabilidade para nossos clientes.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                  <div class="text-center p-6 bg-solar-gold/10 rounded-xl">
+                    <div class="text-3xl font-bold text-solar-gold mb-2 count-up text-shadow-sm" data-testid="stats-projetos" data-target="5000">5.000+</div>
+                    <div class="text-sm text-slate-600">Projetos Instalados</div>
+                  </div>
+                  <div class="text-center p-6 bg-earth-green/10 rounded-xl">
+                    <div class="text-3xl font-bold text-earth-green mb-2 count-up text-shadow-sm" data-testid="stats-experiencia" data-target="10">10+</div>
+                    <div class="text-sm text-slate-600">Anos de Experiência</div>
+                  </div>
+                  <div class="text-center p-6 bg-sky-blue/10 rounded-xl">
+                    <div class="text-3xl font-bold text-sky-blue mb-2 count-up text-shadow-sm" data-testid="stats-satisfacao" data-target="100">100%</div>
+                    <div class="text-sm text-slate-600">Clientes Satisfeitos</div>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div class="text-center">
+                    <div class="bg-solar-gold/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-solar-gold"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8Z"></path></svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-900 mb-2">Missão</h3>
+                    <p class="text-sm text-slate-600">Transformar energia solar em economia real para todos os brasileiros.</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="bg-earth-green/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-earth-green"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-900 mb-2">Visão</h3>
+                    <p class="text-sm text-slate-600">Ser referência nacional em soluções de energia renovável.</p>
+                  </div>
+                  <div class="text-center">
+                    <div class="bg-sky-blue/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-sky-blue"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                    </div>
+                    <h3 class="font-semibold text-slate-900 mb-2">Valores</h3>
+                    <p class="text-sm text-slate-600">Qualidade, sustentabilidade e compromisso com o cliente.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="servicos" class="py-24 bg-sky-blue/5 section-observer">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="text-center mb-16 fade-in">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                Nossos <span class="text-solar-gold">Serviços</span>
+              </h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Oferecemos soluções completas em energia solar, desde o projeto até a manutenção, 
+                garantindo máxima eficiência e economia para você.
+              </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12" id="services-container">
+              <!-- Services will be rendered here by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <section class="py-24 bg-white">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="text-center mb-16 fade-in">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                Por que escolher <span class="text-solar-gold">Energia Solar?</span>
+              </h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                A energia solar oferece benefícios únicos que transformam sua relação com a energia elétrica, 
+                proporcionando economia real e contribuindo para um futuro sustentável.
+              </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-20" id="advantages-container">
+              <!-- Advantages will be rendered here by JavaScript -->
+            </div>
+            
+            <div class="bg-gradient-to-r from-solar-gold/10 to-earth-green/10 rounded-2xl p-8 lg:p-12 text-center fade-in">
+              <h3 class="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">
+                Pronto para começar sua jornada solar?
+              </h3>
+              <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+                Faça uma simulação gratuita e descubra quanto você pode economizar com energia solar. 
+                Nossos especialistas estão prontos para ajudar você.
+              </p>
+              <button onclick="scrollToSection('orcamento')" size="lg" class="bg-solar-gold text-white hover:bg-solar-gold/90 transform hover:scale-105 shadow-lg text-lg px-8 py-4 transition-all duration-300 rounded-md font-medium button-modern" data-testid="button-simular-economia">
+                Simular Economia Agora
+              </button>
+            </div>
+
+            <div class="bg-slate-50 rounded-3xl p-12 fade-in mt-16">
+              <h3 class="text-2xl lg:text-3xl font-bold text-center text-slate-900 mb-12">
+                Depoimentos de <span class="text-solar-gold">Clientes Satisfeitos</span>
+              </h3>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-2xl p-8 shadow-md">
+                  <div class="flex items-start mb-6">
+                    <div class="flex text-yellow-400 mb-4">
+                      <span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span>
+                    </div>
+                  </div>
+                  <p class="text-slate-600 mb-4 leading-relaxed">
+                    "A economia na conta de luz foi imediata! Em 6 meses já conseguimos uma redução de 90%. 
+                    A equipe foi muito profissional e o processo foi super tranquilo."
+                  </p>
+                  <div class="font-semibold text-slate-900">Maria Santos</div>
+                  <div class="text-sm text-slate-500">Residencial - São Paulo</div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 shadow-md">
+                  <div class="flex items-start mb-6">
+                    <div class="flex text-yellow-400 mb-4">
+                      <span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span><span class="text-xl">★</span>
+                    </div>
+                  </div>
+                  <p class="text-slate-600 mb-4 leading-relaxed">
+                    "Investimento que se pagou em 4 anos. Hoje nossa empresa tem energia praticamente gratuita 
+                    e ainda contribui com o meio ambiente. Recomendo!"
+                  </p>
+                  <div class="font-semibold text-slate-900">João Silva</div>
+                  <div class="text-sm text-slate-500">Comercial - Rio de Janeiro</div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                  <div class="text-3xl mb-2">🏆</div>
+                  <div class="font-semibold text-slate-900 mb-1">Certificação</div>
+                  <div class="text-xs text-slate-600">INMETRO Qualidade</div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                  <div class="text-3xl mb-2">🛡️</div>
+                  <div class="font-semibold text-slate-900 mb-1">Garantia</div>
+                  <div class="text-xs text-slate-600">25 anos equipamentos</div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                  <div class="text-3xl mb-2">⚡</div>
+                  <div class="font-semibold text-slate-900 mb-1">Homologação</div>
+                  <div class="text-xs text-slate-600">Todas concessionárias</div>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                  <div class="text-3xl mb-2">📞</div>
+                  <div class="font-semibold text-slate-900 mb-1">Suporte</div>
+                  <div class="text-xs text-slate-600">24h emergência</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="projetos" class="py-24 bg-earth-green/5 section-observer">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="text-center mb-16 fade-in">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                Nossos <span class="text-solar-gold">Projetos</span> Realizados
+              </h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Conheça alguns dos projetos que já realizamos pelo Brasil. 
+                Cada instalação é única e personalizada para as necessidades específicas de cada cliente.
+              </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12" id="projects-container">
+              <!-- Projects will be rendered here by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" class="py-24 bg-white section-observer">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="text-center mb-16 fade-in">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                Perguntas <span class="text-solar-gold">Frequentes</span>
+              </h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Tiramos as principais dúvidas para que você tenha total segurança ao
+                investir em energia solar.
+              </p>
+            </div>
+
+            <div class="max-w-3xl mx-auto" id="faq-container">
+              <!-- FAQ will be rendered here by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <section id="orcamento" class="py-24 bg-white section-observer">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="max-w-5xl mx-auto">
+              <div class="text-center mb-16 fade-in">
+                <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                  Calcule sua <span class="text-solar-gold">Economia</span>
+                </h2>
+                <p class="text-xl text-slate-600">
+                  Descubra quanto você pode economizar com energia solar. 
+                  Faça uma simulação rápida e receba um orçamento personalizado.
+                </p>
+              </div>
+              
+              <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-8 fade-in">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm text-yellow-800 font-medium">
+                      <strong>Importante:</strong> Esta é apenas uma simulação. Os valores apresentados podem variar conforme consumo, localização e condições específicas do projeto.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-gradient-to-br from-solar-gold/5 to-earth-green/5 rounded-2xl p-8 lg:p-12 fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                  <div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-6">Simulador de Economia</h3>
+                    <form id="calculator-form" class="space-y-6">
+                      <div>
+                        <label htmlFor="monthlyBill" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Valor da sua conta de luz mensal (R$)
+                        </label>
+                        <input 
+                          type="number" 
+                          id="monthlyBill" 
+                          placeholder="Digite o valor médio da sua conta de luz (ex: 350)" 
+                          min="50" 
+                          max="5000"
+                          class="form-field"
+                          data-testid="input-monthly-bill"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="propertyType" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Tipo de propriedade
+                        </label>
+                        <select id="propertyType" class="form-field" data-testid="select-property-type">
+                          <option value="">Escolha: residencial, comercial, industrial ou rural</option>
+                          <option value="residential">Residencial</option>
+                          <option value="commercial">Comercial</option>
+                          <option value="industrial">Industrial</option>
+                          <option value="rural">Rural</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="roofArea" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Área disponível do telhado (m²)
+                        </label>
+                        <input 
+                          type="number" 
+                          id="roofArea" 
+                          placeholder="Área aproximada do telhado ou local para instalação (ex: 50)" 
+                          min="10" 
+                          max="1000"
+                          class="form-field"
+                          data-testid="input-roof-area"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="location" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Localização
+                        </label>
+                        <select id="location" class="form-field" data-testid="select-location">
+                          <option value="">Selecione seu estado para cálculo de irradiação solar</option>
+                          <option value="sp">São Paulo</option>
+                          <option value="rj">Rio de Janeiro</option>
+                          <option value="mg">Minas Gerais</option>
+                          <option value="pr">Paraná</option>
+                          <option value="rs">Rio Grande do Sul</option>
+                          <option value="ba">Bahia</option>
+                          <option value="go">Goiás</option>
+                          <option value="df">Distrito Federal</option>
+                        </select>
+                      </div>
+                      
+                      <button type="button" id="calculate-savings-button" class="w-full bg-solar-gold text-white hover:bg-solar-gold/90 transform hover:scale-105 shadow-lg text-lg py-4 transition-all duration-300 rounded-md font-medium button-modern" data-testid="button-calcular-economia">
+                        Calcular Economia
+                      </button>
+                    </form>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200/60">
+                      <h4 class="text-lg font-semibold text-slate-800 mb-4">
+                        Entenda a Simulação
+                      </h4>
+                      <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-sky-blue mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                          <span>Usamos a <strong>irradiação solar média</strong> da sua região. A geração real de energia pode variar com as condições climáticas.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-sky-blue mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                          <span>O <strong>tamanho do sistema</strong> é uma sugestão inicial. O dimensionamento final e exato será feito por um especialista após a visita técnica.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-sky-blue mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                          <span>O <strong>investimento é uma estimativa</strong> e não inclui custos específicos da sua instalação. Para um valor preciso, solicite um orçamento.</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-6">Seus Resultados</h3>
+                    <div class="space-y-4" id="calculator-results">
+                      <!-- Calculator results will be rendered here by JavaScript -->
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                      <p class="text-lg font-semibold text-slate-700 mb-4">
+                        🤔 Quer um orçamento real e personalizado?
+                      </p>
+                      <div class="space-y-4">
+                        <button onclick="scrollToSection('contato')" class="w-full bg-earth-green text-white hover:bg-earth-green/90 transition-all duration-300 px-4 py-2 rounded-md font-medium button-modern" data-testid="button-solicitar-orcamento">
+                          Solicitar Orçamento Detalhado
+                        </button>
+                        <button id="open-whatsapp-calculator" variant="outline" class="w-full border-2 border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-white transition-all duration-300 px-4 py-2 rounded-md font-medium button-modern" data-testid="button-falar-especialista">
+                          Falar com Especialista
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contato" class="py-24 bg-slate-50">
+          <div class="container mx-auto px-6 sm:px-8 lg:px-12">
+            <div class="text-center mb-16 fade-in">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
+                Entre em <span class="text-solar-gold">Contato</span>
+              </h2>
+              <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Estamos prontos para transformar sua energia. Fale conosco e receba um atendimento 
+                personalizado com nossos especialistas em energia solar.
+              </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+              <div class="fade-in">
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 class="text-2xl font-bold text-slate-900 mb-6">Solicite seu Orçamento</h3>
+                  <form id="contact-form" class="space-y-6" action="https://formspree.io/f/myzdyybp" method="POST">
+                    <input type="hidden" name="_next" value="obrigado.html" />
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="contact-firstName" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Nome *
+                        </label>
+                        <input 
+                          type="text" 
+                          id="contact-firstName" 
+                          placeholder="Seu nome"
+                          required
+                          class="form-field"
+                          name="nome"
+                          data-testid="input-first-name"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="contact-lastName" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Sobrenome *
+                        </label>
+                        <input 
+                          type="text" 
+                          id="contact-lastName" 
+                          placeholder="Seu sobrenome"
+                          required
+                          class="form-field"
+                          name="sobrenome"
+                          data-testid="input-last-name"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="contact-email" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          E-mail *
+                        </label>
+                        <input 
+                          type="email" 
+                          id="contact-email" 
+                          placeholder="seu@email.com"
+                          required
+                          class="form-field"
+                          name="email"
+                          data-testid="input-email"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="contact-phone" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Telefone/WhatsApp *
+                        </label>
+                        <input 
+                          type="tel" 
+                          id="contact-phone" 
+                          placeholder="(11) 99999-9999"
+                          required
+                          class="form-field"
+                          name="telefone"
+                          data-testid="input-phone"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="contact-city" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Cidade *
+                        </label>
+                        <input 
+                          type="text" 
+                          id="contact-city" 
+                          placeholder="Sua cidade"
+                          required
+                          class="form-field"
+                          name="cidade"
+                          data-testid="input-city"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="contact-state" class="text-sm font-semibold text-slate-700 mb-2 block">
+                          Estado *
+                        </label>
+                        <select id="contact-state" class="form-field" required data-testid="select-state" name="estado">
+                          <option value="">Selecione seu estado</option>
+                          <option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option><option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option><option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="contact-message" class="text-sm font-semibold text-slate-700 mb-2 block">
+                        Mensagem
+                      </label>
+                      <textarea 
+                        id="contact-message" 
+                        rows="4"
+                        placeholder="Conte-nos sobre seu projeto de energia solar..."
+                        class="form-field resize-none"
+                        name="mensagem"
+                        data-testid="textarea-message"
+                      ></textarea>
+                    </div>
+                    
+                    <div class="flex items-start">
+                      <div class="flex items-center h-5">
+                        <input 
+                          type="checkbox" 
+                          id="contact-consent" 
+                          class="w-4 h-4 text-solar-gold focus:ring-solar-gold rounded border-gray-300"
+                          data-testid="checkbox-consent"
+                          required
+                        />
+                      </div>
+                      <div class="ml-3 text-sm">
+                        <label htmlFor="contact-consent" class="text-slate-600">
+                          Concordo em receber comunicações da SolarTech Brasil e aceito os 
+                          <a href="#" class="text-solar-gold hover:underline ml-1" data-modal-target="termos-de-privacidade.html">termos de privacidade</a>.
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <button type="submit" id="contact-submit-button" class="w-full bg-solar-gold text-white hover:bg-solar-gold/90 transform hover:scale-105 shadow-lg text-lg py-4 transition-all duration-300 rounded-md font-medium button-modern" data-testid="button-enviar-solicitacao">
+                      Enviar Solicitação
+                    </button>
+                  </form>
+
+                  <div class="mt-8 pt-6 border-t border-slate-200/60">
+                    <h4 class="text-lg font-semibold text-slate-800 mb-4">
+                      O que acontece depois?
+                    </h4>
+                    <ol class="space-y-4 text-sm text-slate-600">
+                      <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 bg-solar-gold text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs mt-0.5">1</div>
+                        <span><strong>Análise da Solicitação:</strong> Um de nossos especialistas revisará suas informações para entender as necessidades do seu projeto.</span>
+                      </li>
+                      <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 bg-solar-gold text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs mt-0.5">2</div>
+                        <span><strong>Contato e Agendamento:</strong> Entraremos em contato em até 24 horas úteis para tirar dúvidas e, se necessário, agendar uma visita técnica sem compromisso.</span>
+                      </li>
+                      <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 bg-solar-gold text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs mt-0.5">3</div>
+                        <span><strong>Proposta Personalizada:</strong> Você receberá um orçamento detalhado e transparente, com todas as informações sobre equipamentos, custos e economia.</span>
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="space-y-8 fade-in">
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 class="text-2xl font-bold text-slate-900 mb-6">Informações de Contato</h3>
+                  <div class="space-y-6">
+                    <div class="flex items-start">
+                      <div class="bg-solar-gold/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-solar-gold"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Endereço</h4>
+                        <p class="text-slate-600 leading-relaxed">
+                          Av. Paulista, 1000 - Sala 1205<br />
+                          Bela Vista, São Paulo - SP<br />
+                          CEP: 01310-100
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                      <div class="bg-earth-green/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-earth-green"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.75-3.75A19.79 19.79 0 0 1 2 4.18 2 2 0 0 1 4.18 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Telefone</h4>
+                        <p class="text-slate-600">
+                          <a href="tel:+5511999999999" class="hover:text-earth-green transition-colors">
+                            (11) 99999-9999
+                          </a>
+                        </p>
+                        <p class="text-slate-600">
+                          <a href="tel:+551133333333" class="hover:text-earth-green transition-colors">
+                            (11) 3333-3333
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                      <div class="bg-sky-blue/10 w-12 h-12 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-sky-blue"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-slate-900 mb-1">E-mail</h4>
+                        <p class="text-slate-600">
+                          <a href="mailto:contato@solartechbrasil.com.br" class="hover:text-sky-blue transition-colors">
+                            contato@solartechbrasil.com.br
+                          </a>
+                        </p>
+                        <p class="text-slate-600">
+                          <a href="mailto:orcamento@solartechbrasil.com.br" class="hover:text-sky-blue transition-colors">
+                            orcamento@solartechbrasil.com.br
+                          </a>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                  <h3 class="text-2xl font-bold text-slate-900 mb-6">Horário de Atendimento</h3>
+                  <div class="space-y-3">
+                    <div class="flex justify-between">
+                      <span class="text-slate-600">Segunda a Sexta:</span>
+                      <span class="font-semibold text-slate-900">8h às 18h</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-600">Sábado:</span>
+                      <span class="font-semibold text-slate-900">8h às 12h</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-600">Domingo:</span>
+                      <span class="font-semibold text-slate-900">Fechado</span>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-6 pt-6 border-t border-slate-200">
+                    <p class="text-sm text-slate-600 mb-4">
+                      Atendimento 24h via WhatsApp para emergências
+                    </p>
+                    <button id="open-whatsapp-contact" class="w-full bg-green-500 text-white hover:bg-green-600 flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium button-modern" data-testid="button-whatsapp-contact">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.106"/>
+                      </svg>
+                      Chamar no WhatsApp
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="bg-slate-900 text-white py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <div>
+              <div class="flex items-center mb-6">
+                <span class="text-2xl font-bold text-solar-gold">SolarTech</span>
+                <span class="text-2xl font-bold text-earth-green">Brasil</span>
+              </div>
+              <p class="text-slate-300 leading-relaxed mb-6">
+                Transformando o futuro energético do Brasil com soluções inteligentes e sustentáveis em energia solar.
+              </p>
+              <div class="flex space-x-4">
+                <a href="https://twitter.com/solartechbrasil" target="_blank" rel="noopener noreferrer" class="bg-slate-800 p-3 rounded-lg hover:bg-solar-gold transition-colors" data-testid="link-twitter" aria-label="Visite nosso Twitter">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17-18 11.6 2.2.1 4.4-.6 6-2 1.1-1.1 1.8-2.5 2-4 .7 0 1.5-.1 2-.5 1-.9 1.2-2.3 1.2-3.6 0-.8-.1-1.6-.3-2.4 0-.1 0-.1-.2-.2 0 0-.1 0-.1.1-.5-.4-1.2-.6-2-.8-.4-.1-.8-.2-1.2-.2-1 0-2 .1-3 .5-1 .4-1.8 1-2.4 1.8-.7.8-1 1.8-1 2.8 0 1 .2 2 .6 2.8.4.8.9 1.4 1.5 2 .6.6 1.3 1 2 1.2.7.2 1.4.3 2 .3 1 0 2-.2 3-.6 1-.4 1.8-.9 2.4-1.5.7-.6 1-1.3 1-2-.1-.5-.2-1-.4-1.5-.2-.5-.5-.9-.8-1.2z" fill="currentColor"></path></svg>
+                </a>
+                <a href="https://facebook.com/solartechbrasil" target="_blank" rel="noopener noreferrer" class="bg-slate-800 p-3 rounded-lg hover:bg-solar-gold transition-colors" data-testid="link-facebook" aria-label="Visite nosso Facebook">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                </a>
+                <a href="https://linkedin.com/company/solartechbrasil" target="_blank" rel="noopener noreferrer" class="bg-slate-800 p-3 rounded-lg hover:bg-solar-gold transition-colors" data-testid="link-linkedin" aria-label="Visite nosso LinkedIn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="https://instagram.com/solartechbrasil" target="_blank" rel="noopener noreferrer" class="bg-slate-800 p-3 rounded-lg hover:bg-solar-gold transition-colors" data-testid="link-instagram" aria-label="Visite nosso Instagram">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-bold mb-6">Serviços</h3>
+              <ul class="space-y-3">
+                <li><a href="#servicos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Instalação Residencial</a></li>
+                <li><a href="#servicos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Instalação Comercial</a></li>
+                <li><a href="#servicos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Instalação Industrial</a></li>
+                <li><a href="#servicos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Manutenção Preventiva</a></li>
+                <li><a href="#servicos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Consultoria Especializada</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-bold mb-6">Empresa</h3>
+              <ul class="space-y-3">
+                <li><a href="#sobre" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Sobre Nós</a></li>
+                <li><a href="#projetos" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Projetos Realizados</a></li>
+                <li><a href="#sobre" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Certificações</a></li>
+                <li><a href="#sobre" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Parceiros</a></li>
+                <li><a href="#contato" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Trabalhe Conosco</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="text-lg font-bold mb-6">Suporte</h3>
+              <ul class="space-y-3">
+                <li><a href="#contato" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Contato</a></li>
+                <li><a href="#faq" class="text-left text-slate-300 hover:text-solar-gold transition-colors">FAQ</a></li>
+                <li><a href="#faq" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Garantias</a></li>
+                <li><a href="#contato" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Documentação</a></li>
+                <li><a href="#contato" class="text-left text-slate-300 hover:text-solar-gold transition-colors">Políticas</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="border-t border-slate-700 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+              <p class="text-slate-400 text-sm mb-4 md:mb-0">
+                © 2025 Site Demonstração. Todos os direitos reservados.
+              </p>
+              <div class="flex items-center justify-center md:justify-end space-x-4 text-sm text-slate-400">
+                <a href="#" class="hover:text-solar-gold transition-colors" data-modal-target="termos-de-uso.html">Termos de Uso</a>
+                <span class="h-4 w-px bg-slate-700" aria-hidden="true"></span>
+                <a href="#" class="hover:text-solar-gold transition-colors" data-modal-target="termos-de-privacidade.html">Política de Privacidade</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <div class="fixed bottom-6 right-6 z-50">
+        <button 
+          id="whatsapp-floating-button"
+          class="bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all whatsapp-pulse group"
+          title="Fale conosco no WhatsApp"
+          data-testid="whatsapp-button"
+        >
+          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.106"/>
+          </svg>
+          <div class="absolute bottom-full right-0 mb-2 px-3 py-1 bg-slate-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            Fale conosco!
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <button id="back-to-top-button" class="fixed bottom-6 right-6 z-50 p-4 bg-solar-gold text-white rounded-full shadow-lg hover:bg-solar-gold/90 transition-all duration-300 hidden" title="Voltar ao Topo" data-testid="back-to-top-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+        <path d="M12 19V5"/>
+        <path d="M5 12l7-7 7 7"/>
+      </svg>
+    </button>
+
+    <script src="script.js"></script>
+
+    <!-- Modal para Termos de Privacidade e Uso -->
+    <div id="policy-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-[9999] hidden opacity-0 transition-opacity duration-300 ease-in-out">
+      <div id="policy-modal-inner" class="bg-white rounded-lg shadow-xl max-w-xl w-full max-h-[90vh] overflow-y-auto relative transform scale-95 opacity-0 transition-all duration-300 ease-in-out">
+        <button id="close-policy-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl font-bold">
+          &times;
+        </button>
+        <div id="policy-modal-content" class="p-8 pt-10">
+          <!-- Conteúdo será carregado aqui via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
