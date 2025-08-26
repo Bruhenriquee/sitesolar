@@ -50,61 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  document.title = "Site Demonstração";
-  let metaDescription = document.querySelector('meta[name="description"]');
-  if (!metaDescription) {
-    metaDescription = document.createElement('meta');
-    metaDescription.setAttribute('name', 'description');
-    document.head.appendChild(metaDescription);
-  }
-  metaDescription.setAttribute("content", "Especialistas em energia solar no Brasil com mais de 10 anos de experiência. Instalação, manutenção e consultoria. Economia até 95% na conta de luz. Orçamento gratuito.");
-
-  const ogTags = [
-    { property: 'og:title', content: 'Site Demonstração' },
-    { property: 'og:description', content: 'Transforme energia solar em economia real. Mais de 5.000 projetos instalados. Orçamento gratuito e instalação em 24h.' },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:url', content: window.location.href },
-    { property: 'og:image', content: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630' }
-  ];
-
-  ogTags.forEach(tag => {
-    let ogTag = document.querySelector(`meta[property="${tag.property}"]`);
-    if (!ogTag) {
-      ogTag = document.createElement('meta');
-      ogTag.setAttribute('property', tag.property);
-      document.head.appendChild(ogTag);
-    }
-    ogTag.setAttribute('content', tag.content);
-  });
-
-  const preloadResources = [
-    'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600&fm=webp&q=85'
-  ];
-
-  preloadResources.forEach(href => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = href.includes('fonts.googleapis') ? 'style' : 'image';
-    link.href = href;
-    document.head.appendChild(link);
-  });
-
   if (mobileMenuToggle) {
     mobileMenuToggle.addEventListener('click', () => {
       setMenuState(!isMenuOpen);
     });
   }
 
-  document.querySelectorAll('button[onclick^="scrollToSection"]').forEach(button => {
-    const sectionIdMatch = button.getAttribute('onclick').match(/\('(.*)'\)/);
-    if (sectionIdMatch && sectionIdMatch[1]) {
-      const sectionId = sectionIdMatch[1];
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.scrollToSection(sectionId);
-      });
-      button.removeAttribute('onclick');
-    }
+  // Adiciona o evento de clique para todos os botões de navegação com 'data-section-id'
+  document.querySelectorAll('button[data-section-id]').forEach(button => {
+    button.addEventListener('click', () => {
+      const sectionId = button.getAttribute('data-section-id');
+      window.scrollToSection(sectionId);
+    });
   });
 
   const openWhatsApp = (message) => {
@@ -113,17 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open(url, '_blank');
   };
 
-  const whatsappFloatingButton = document.getElementById('whatsapp-floating-button');
-  if (whatsappFloatingButton) {
-    whatsappFloatingButton.addEventListener('click', () => {
-      openWhatsApp("Olá! Gostaria de saber mais sobre energia solar.");
-    });
-  }
-
-  const openWhatsAppContactButtons = document.querySelectorAll('[id^="open-whatsapp-"]');
-  openWhatsAppContactButtons.forEach(button => {
+  // Centraliza todos os gatilhos do WhatsApp em um único listener
+  document.querySelectorAll('.js-whatsapp-trigger').forEach(button => {
     button.addEventListener('click', () => {
-      openWhatsApp("Olá! Gostaria de falar com um especialista sobre energia solar.");
+      const message = button.dataset.message || "Olá! Gostaria de saber mais sobre os serviços de energia solar.";
+      openWhatsApp(message);
     });
   });
 
@@ -186,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </ul>
         <div class="mt-auto">
           <button 
-            onclick="window.scrollToSection('${service.targetSection}')"
+            data-section-id="${service.targetSection}"
             class="w-full ${service.buttonClass} transition-all duration-300 px-4 py-2 rounded-md font-medium button-modern"
             data-testid="button-${service.buttonText.toLowerCase().replace(/\s+/g, '-')}"
           >
@@ -451,20 +402,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const calculateSavingsButton = document.getElementById('calculate-savings-button');
   const calculatorResultsDiv = document.getElementById('calculator-results');
 
+  // Objeto de configuração para facilitar a alteração das taxas da calculadora
+  // ATUALIZE OS VALORES AQUI: Para manter a calculadora precisa, basta atualizar
+  // os valores de kwhPrice (preço da energia) e costPerKwp (custo do sistema).
+  const calculatorConfig = {
+    areaPerKwp: 7, // Média de metros quadrados (m²) necessários para instalar 1 kWp de painéis solares.
+    systemLifespanYears: 25, // Vida útil do sistema em anos.
+    rates: {
+      // Valores padrão caso o estado não esteja na lista.
+      default: {
+        savingsPercentage: 0.9,   // Percentual de economia desejado na conta.
+        kwhPrice: 0.85,           // Preço médio do kWh em R$.
+        hsp: 4.5,                 // Média de Horas de Sol Pleno (HSP) por dia.
+        costPerKwp: 6000,         // Custo estimado em R$ por kWp instalado.
+      },
+      // Taxas específicas por estado (valores ilustrativos, ajuste conforme a realidade).
+      sp: { savingsPercentage: 0.9, kwhPrice: 0.92, hsp: 4.6, costPerKwp: 5900 },
+      rj: { savingsPercentage: 0.92, kwhPrice: 0.98, hsp: 4.8, costPerKwp: 6100 },
+      mg: { savingsPercentage: 0.9, kwhPrice: 0.88, hsp: 5.2, costPerKwp: 5800 },
+      ba: { savingsPercentage: 0.95, kwhPrice: 0.85, hsp: 5.5, costPerKwp: 5700 },
+      pr: { savingsPercentage: 0.88, kwhPrice: 0.80, hsp: 4.4, costPerKwp: 6200 },
+      rs: { savingsPercentage: 0.85, kwhPrice: 0.78, hsp: 4.2, costPerKwp: 6300 },
+      go: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850 },
+      df: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850 }
+    }
+  };
+
+
+  // Objeto com resultados padrão para serem exibidos antes do primeiro cálculo.
+  // Garante que a seção de resultados não fique vazia ao carregar a página.
   const defaultCalculationResults = {
     monthlySavings: 315,
     systemSize: 6.5,
     paybackTime: 4.2,
     investment: 39900,
-    totalSavings: 189000
+    totalSavings: 189000,
   };
 
+  // Variável que armazena os resultados do cálculo atual.
+  // Inicia com os valores padrão e é atualizada após cada cálculo.
   let currentCalculatorResults = { ...defaultCalculationResults };
 
+  // Array de configuração para renderizar os cards de resultado de forma dinâmica.
+  // Cada objeto define um card: ícone, texto, como formatar o valor e classes de estilo.
   const resultItemsConfig = [
     {
       icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-solar-gold"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
-      label: "Economia mensal estimada",
+      label: "Economia mensal estimada", // Texto descritivo do resultado.
       getValue: (r) => `R$ ${r.monthlySavings.toFixed(0)}`,
       color: "text-solar-gold",
       bg: "bg-solar-gold/10",
@@ -496,10 +480,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
+  /**
+   * Renderiza os resultados do cálculo na interface do usuário.
+   * @param {object} results - O objeto contendo os dados do cálculo (monthlySavings, systemSize, etc.).
+   */
   const renderCalculatorResults = (results) => {
+    // Verifica se o container de resultados existe no HTML.
     if (!calculatorResultsDiv) return;
 
-    calculatorResultsDiv.innerHTML = resultItemsConfig.map((item, index) => `
+    // Gera o HTML para cada card de resultado, iterando sobre o array de configuração.
+    calculatorResultsDiv.innerHTML = resultItemsConfig.map((item) => `
       <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4">
         <div class="${item.bg} p-3 rounded-lg">
           ${item.icon}
@@ -512,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('') + `
+      <!-- Card de resumo final com a economia total em 25 anos -->
       <div class="bg-gradient-to-r from-solar-gold to-earth-green rounded-xl p-6 text-white text-center">
         <div class="flex items-center justify-center gap-4">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 opacity-80"><path d="M20 12V8H6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h13.8L20 12z"/><path d="M18.88 17.07l-.93-.93c-.6-.6-.94-1.4-.94-2.2v-2c0-.8.34-1.6.94-2.2l.93-.93c.3-.3.47-.7.47-1.1s-.17-.8-.47-1.1L18.4 5.3c-.3-.3-.7-.47-1.1-.47s-.8.17-1.1.47l-.93.93c-.6.6-.94 1.4-.94 2.2v2c0 .8.34 1.6.94 2.2l.93.93c.3.3.47.7.47 1.1s-.17.8-.47 1.1zM6 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4z"/><path d="M3 10V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"/></svg>
@@ -526,49 +517,96 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   };
 
+  /**
+   * Função principal que executa a lógica de cálculo da economia.
+   * É chamada quando o usuário clica no botão "Calcular Economia".
+   */
   const calculateSavings = () => {
+    // 1. Coleta e converte os valores dos campos do formulário.
     const monthlyBill = parseFloat(monthlyBillInput.value) || 0;
     const propertyType = propertyTypeSelect.value;
     const roofArea = parseFloat(roofAreaInput.value) || 0;
-    const location = locationSelect.value;
+    const location = locationSelect.value; // Captura a sigla do estado (ex: 'sp', 'rj').
 
+    // 2. Validação: Verifica se todos os campos obrigatórios foram preenchidos.
     if (!monthlyBill || !propertyType || !roofArea || !location) {
       console.error('Por favor, preencha todos os campos para calcular sua economia.');
+      // Poderia exibir uma mensagem de erro para o usuário aqui.
       return;
     }
 
-    const savingsPercentage = 0.9;
-    const monthlySavings = monthlyBill * savingsPercentage;
-    const systemSize = Math.ceil(monthlyBill / 50);
-    const investment = systemSize * 6000;
-    const paybackYears = investment / (monthlySavings * 12);
-    const totalSavings = monthlySavings * 12 * 25;
+    // 3. Seleciona as taxas corretas com base no estado escolhido.
+    // Se o estado (location) não for encontrado em `calculatorConfig.rates`, usa as taxas `default`.
+    const stateRates = calculatorConfig.rates[location] || calculatorConfig.rates.default;
 
+    // 4. Executa os cálculos com base nos parâmetros realistas.
+    // a. Estima o consumo mensal de energia em kWh.
+    const monthlyConsumptionKwh = monthlyBill / stateRates.kwhPrice;
+    // b. Dimensiona o sistema IDEAL (em kWp) para suprir esse consumo.
+    //    Fórmula: Consumo Mensal em kWh / (Horas de Sol Pleno por dia * 30 dias)
+    let systemSize = monthlyConsumptionKwh / (stateRates.hsp * 30);
+
+    // c. Verifica a limitação da área do telhado. Calcula o tamanho máximo que cabe na área informada.
+    const maxSystemSizeByArea = roofArea / calculatorConfig.areaPerKwp;
+
+    // d. O tamanho final do sistema é o MENOR valor entre o ideal (baseado no consumo) e o máximo (baseado na área).
+    if (systemSize > maxSystemSizeByArea) {
+      console.warn(`O sistema foi limitado pela área do telhado. Tamanho ideal: ${systemSize.toFixed(1)} kWp, Tamanho máximo pela área: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
+      systemSize = maxSystemSizeByArea;
+    }
+
+    // e. Calcula o investimento estimado com o tamanho final do sistema.
+    const investment = Math.ceil(systemSize) * stateRates.costPerKwp;
+    const monthlySavings = monthlyBill * stateRates.savingsPercentage;
+    const paybackYears = investment / (monthlySavings * 12);
+    const totalSavings = monthlySavings * 12 * calculatorConfig.systemLifespanYears;
+
+    // 5. Atualiza o objeto de resultados com os novos valores calculados.
     currentCalculatorResults = {
       monthlySavings,
       systemSize,
       paybackTime: paybackYears,
       investment,
-      totalSavings
+      totalSavings,
     };
     
+    // 6. Salva os resultados no localStorage do navegador.
+    // Isso permite que os resultados persistam se o usuário recarregar a página.
     localStorage.setItem('solarCalculatorResults', JSON.stringify(currentCalculatorResults));
+    
+    // 7. Chama a função para renderizar os novos resultados na tela.
     renderCalculatorResults(currentCalculatorResults);
   };
 
+  // Adiciona um "ouvinte de evento" ao botão de calcular.
+  // Quando o botão é clicado, a função `calculateSavings` é executada.
   if (calculateSavingsButton) {
     calculateSavingsButton.addEventListener('click', calculateSavings);
   }
 
+  // Tenta carregar os resultados do último cálculo salvo no localStorage.
   const cachedResult = localStorage.getItem('solarCalculatorResults');
   if (cachedResult) {
     try {
-      currentCalculatorResults = JSON.parse(cachedResult);
+      const parsedResult = JSON.parse(cachedResult);
+      // Validação para garantir que o objeto do cache é válido antes de usá-lo.
+      // Isso previne erros se os dados no localStorage estiverem corrompidos, nulos ou incompletos.
+      if (parsedResult && typeof parsedResult.monthlySavings === 'number' && typeof parsedResult.totalSavings === 'number') {
+        currentCalculatorResults = parsedResult;
+      } else {
+        // Se os dados forem inválidos, reverte para o padrão e limpa o cache para evitar futuros erros.
+        console.warn('Cached calculator results are invalid. Using default values and clearing cache.');
+        currentCalculatorResults = { ...defaultCalculationResults };
+        localStorage.removeItem('solarCalculatorResults');
+      }
     } catch (error) {
+      // Se houver um erro na conversão (JSON inválido), usa os resultados padrão e limpa o cache.
       console.error('Error parsing cached results:', error);
       currentCalculatorResults = { ...defaultCalculationResults };
+      localStorage.removeItem('solarCalculatorResults');
     }
   }
+  // Renderiza os resultados na tela ao carregar a página (sejam os salvos ou os padrão).
   renderCalculatorResults(currentCalculatorResults);
 
   const countUpElements = document.querySelectorAll('.count-up');
@@ -654,11 +692,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  renderServices();
-  renderProjects();
-  renderAdvantages();
-  renderFaq();
-
   const contactForm = document.getElementById('contact-form');
 
   if (contactForm) {
@@ -703,42 +736,37 @@ const policyModalContent = document.getElementById('policy-modal-content');
 const policyModalInner = document.getElementById('policy-modal-inner'); // Novo: Referência à div interna
 
 async function openPolicyModal(url) {
-    console.log('Abrindo modal para:', url); // DEBUG
     try {
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Erro ao carregar o conteúdo: ${response.statusText}`);
         }
         const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const contentToLoad = doc.querySelector('.modal-content-container');
+        const contentToLoad = new DOMParser().parseFromString(html, 'text/html').querySelector('.modal-content-container');
 
         if (contentToLoad) {
             policyModalContent.innerHTML = contentToLoad.innerHTML;
             policyModal.classList.remove('hidden');
             // Forçar reflow para garantir que a transição ocorra
             void policyModal.offsetWidth; 
-            policyModal.classList.remove('opacity-0');
-            policyModalInner.classList.remove('opacity-0', 'scale-95'); // Remove classes de ocultação
-            policyModalInner.classList.add('opacity-100', 'scale-100'); // Adiciona classes de exibição
+            policyModal.classList.add('opacity-100');
+            policyModalInner.classList.add('opacity-100', 'scale-100');
+            policyModalInner.classList.remove('opacity-0', 'scale-95');
             document.body.classList.add('overflow-hidden');
-            console.log('Modal aberto com sucesso.'); // DEBUG
         } else {
-            console.error('Container de conteúdo do modal não encontrado no arquivo:', url); // DEBUG
+            console.error('Container de conteúdo do modal (.modal-content-container) não encontrado no arquivo:', url);
             alert('Erro: Conteúdo do modal não encontrado.');
         }
     } catch (error) {
-        console.error('Erro ao carregar conteúdo do modal:', error); // DEBUG
+        console.error('Erro ao carregar conteúdo do modal:', error);
         alert('Erro ao carregar os termos. Tente novamente.');
     }
 }
 
 function closePolicyModal() {
-    console.log('Fechando modal.'); // DEBUG
-    policyModal.classList.add('opacity-0'); // Inicia a transição de saída do overlay
-    policyModalInner.classList.remove('opacity-100', 'scale-100'); // Remove classes de exibição
-    policyModalInner.classList.add('opacity-0', 'scale-95'); // Inicia a transição de saída do conteúdo
+    policyModal.classList.remove('opacity-100');
+    policyModalInner.classList.remove('opacity-100', 'scale-100');
+    policyModalInner.classList.add('opacity-0', 'scale-95');
 
     document.body.classList.remove('overflow-hidden');
 
@@ -746,7 +774,6 @@ function closePolicyModal() {
     policyModal.addEventListener('transitionend', () => {
         policyModal.classList.add('hidden');
         policyModalContent.innerHTML = ''; // Limpar conteúdo
-        console.log('Modal fechado com sucesso.'); // DEBUG
     }, { once: true });
 }
 
@@ -758,7 +785,7 @@ document.querySelectorAll('a[data-modal-target]').forEach(link => {
         if (targetFile) {
             openPolicyModal(targetFile);
         } else {
-            console.error('Link de modal sem atributo data-modal-target:', link); // DEBUG
+            console.error('Link de modal sem atributo data-modal-target:', link);
         }
     });
 });
@@ -777,17 +804,39 @@ if (policyModal) {
     });
 }
 
+  // Lógica do botão "Voltar ao Topo"
+  const backToTopButton = document.getElementById('back-to-top-button');
+  if (backToTopButton) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.remove('opacity-0', 'pointer-events-none');
+        backToTopButton.classList.add('opacity-100');
+      } else {
+        backToTopButton.classList.add('opacity-0', 'pointer-events-none');
+        backToTopButton.classList.remove('opacity-100');
+      }
+    });
 
-const faders = document.querySelectorAll('.fade-in');
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Renderiza todo o conteúdo dinâmico no final para garantir que todos os scripts e listeners estejam configurados.
+  renderServices();
+  renderProjects();
+  renderAdvantages();
+  renderFaq();
+
+  // Configura a animação de fade-in APÓS o conteúdo ter sido renderizado.
+  const faders = document.querySelectorAll('.fade-in');
   const appearOptions = {
     threshold: 0.1,
     rootMargin: "0px 0px -100px 0px"
   };
   const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        return;
-      } else {
+      if (entry.isIntersecting) {
         entry.target.classList.add('visible');
         appearOnScroll.unobserve(entry.target);
       }
@@ -797,4 +846,5 @@ const faders = document.querySelectorAll('.fade-in');
   faders.forEach(fader => {
     appearOnScroll.observe(fader);
   });
+
 });
