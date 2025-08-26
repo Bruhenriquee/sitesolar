@@ -589,38 +589,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const maxSystemSizeByArea = roofArea / calculatorConfig.areaPerKwp;
 
-    // d. Lógica de limitação explícita para garantir a correção.
-    let finalSystemSize;
-    let isLimitedByArea;
+    // d. Lógica de limitação refatorada para ser mais direta e robusta.
+    const isLimitedByArea = idealSystemSize > maxSystemSizeByArea;
+    let systemSize = idealSystemSize; // Começa com o tamanho ideal
 
-    if (idealSystemSize > maxSystemSizeByArea) {
-      // Se o sistema ideal é MAIOR que o que cabe no telhado, o sistema é LIMITADO pela área.
-      isLimitedByArea = true;
-      finalSystemSize = maxSystemSizeByArea; // O tamanho final é o máximo que cabe.
+    if (isLimitedByArea) {
+      // Se for limitado, sobrescreve o tamanho do sistema com o máximo que a área permite.
       console.warn(`O sistema foi limitado pela área do telhado. Tamanho ideal: ${idealSystemSize.toFixed(1)} kWp, Tamanho máximo pela área: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
-    } else {
-      // Se o sistema ideal é MENOR ou igual ao que cabe, não há limitação pela área.
-      isLimitedByArea = false;
-      finalSystemSize = idealSystemSize; // O tamanho final é o ideal.
+      systemSize = maxSystemSizeByArea;
     }
 
-    // e. Cálculos finais baseados no tamanho de sistema realista (finalSystemSize).
-    const investment = Math.ceil(finalSystemSize) * stateRates.costPerKwp;
+    // e. Cálculos finais baseados no tamanho de sistema realista (systemSize).
+    const investment = Math.ceil(systemSize) * stateRates.costPerKwp;
     let monthlySavings = monthlyBill * stateRates.savingsPercentage;
 
-    // Se o sistema foi limitado, a economia mensal também deve ser recalculada para ser realista.
     if (isLimitedByArea) {
-      monthlySavings = (finalSystemSize * avgMonthlyGenerationPerKwp) * stateRates.kwhPrice;
+      // Se o sistema foi limitado, a economia mensal também deve ser recalculada.
+      monthlySavings = (systemSize * avgMonthlyGenerationPerKwp) * stateRates.kwhPrice;
     }
 
-    // Cálculo de payback mais seguro para evitar divisão por zero.
     const paybackYears = (investment > 0 && monthlySavings > 0) ? investment / (monthlySavings * 12) : 0;
     const totalSavings = monthlySavings * 12 * calculatorConfig.systemLifespanYears;
 
-    // 5. Atualiza o objeto de resultados com os novos valores calculados.
     currentCalculatorResults = {
       monthlySavings,
-      systemSize: finalSystemSize,
+      systemSize: systemSize,
       paybackTime: paybackYears,
       investment,
       totalSavings,
