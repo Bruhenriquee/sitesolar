@@ -394,6 +394,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  // ===================================================================================
+  // INÍCIO DA LÓGICA DA CALCULADORA DE ECONOMIA
+  // ===================================================================================
+
+  // --- Seletores de Elementos do DOM ---
+  // Mapeia os elementos do formulário e da área de resultados para variáveis para fácil acesso.
   const calculatorForm = document.getElementById('calculator-form');
   const monthlyBillInput = document.getElementById('monthlyBill');
   const propertyTypeSelect = document.getElementById('propertyType');
@@ -402,44 +408,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const calculateSavingsButton = document.getElementById('calculate-savings-button');
   const calculatorResultsDiv = document.getElementById('calculator-results');
   
-  // --- CONFIGURAÇÃO DA API (OPCIONAL) ---
+  // --- Configuração da API PVWatts (NREL) ---
+  // Esta seção controla o uso da API para cálculos de geração de energia.
   const calculatorApiConfig = {
-    // Para usar a API do NREL (mais precisa), mude para 'true'. Para usar a estimativa manual (HSP), mude para 'false'.
+    // Defina como 'true' para usar a API do NREL (requer chave) para cálculos mais precisos.
+    // Defina como 'false' para usar o método de cálculo manual baseado em HSP (Horas de Sol Pleno).
     useApi: true, 
-    // Cole aqui a sua chave de API gratuita obtida em: https://developer.nrel.gov/signup/
+    // Insira sua chave de API gratuita do NREL aqui. Obtenha em: https://developer.nrel.gov/signup/
+    // A chave atual é um exemplo e deve ser substituída.
     apiKey: "Uq9HgdkTjbqLglrCtzdsEOx2gNBCs3eOyASSFgU1", 
   };
 
-  // Objeto de configuração para as taxas da calculadora.
-  // ATUALIZE OS VALORES AQUI para manter a calculadora precisa.
+  // --- Parâmetros e Taxas da Calculadora ---
+  // Centraliza todas as variáveis e taxas usadas nos cálculos para fácil manutenção.
+  // ATENÇÃO: Manter estes valores atualizados é crucial para a precisão da calculadora.
   const calculatorConfig = {
-    areaPerKwp: 7, // Média de metros quadrados (m²) necessários para instalar 1 kWp de painéis solares.
-    systemLifespanYears: 25, // Vida útil do sistema em anos.
+    // Média de metros quadrados (m²) de telhado necessários para instalar 1 kWp de painéis.
+    areaPerKwp: 7, 
+    // Vida útil do sistema em anos, usada para calcular a economia total a longo prazo.
+    systemLifespanYears: 25, 
+    // Taxas, coordenadas e custos específicos por estado.
     rates: {
-      // Valores padrão caso o estado não esteja na lista.
+      // Valores padrão aplicados se o estado selecionado não estiver na lista abaixo.
       default: {
-        savingsPercentage: 0.9,
+        savingsPercentage: 0.9,   // Percentual de economia padrão sobre a conta de luz.
         kwhPrice: 0.85,           // Preço médio do kWh em R$.
-        hsp: 4.5,                 // Média de Horas de Sol Pleno (HSP) por dia.
-        costPerKwp: 6000,         // Custo estimado em R$ por kWp instalado.
-        lat: -15.78,              // Latitude padrão (Brasília)
-        lon: -47.92               // Longitude padrão (Brasília)
+        hsp: 4.5,                 // Média de Horas de Sol Pleno (HSP) por dia (usado no cálculo manual).
+        lat: -15.78,              // Latitude padrão (Brasília) para a API.
+        lon: -47.92,              // Longitude padrão (Brasília) para a API.
+        costPerKwp: {             // Custo por kWp (R$) varia com o tipo de propriedade.
+          residential: 6000,
+          commercial: 5500,
+          industrial: 5200,
+          rural: 5800
+        }
       },
-      // Taxas e coordenadas específicas por estado (valores ilustrativos, ajuste conforme a realidade).
-      sp: { savingsPercentage: 0.9, kwhPrice: 0.92, hsp: 4.6, costPerKwp: 5900, lat: -23.55, lon: -46.63 },
-      rj: { savingsPercentage: 0.92, kwhPrice: 0.98, hsp: 4.8, costPerKwp: 6100, lat: -22.90, lon: -43.17 },
-      mg: { savingsPercentage: 0.9, kwhPrice: 0.88, hsp: 5.2, costPerKwp: 5800, lat: -19.92, lon: -43.93 },
-      ba: { savingsPercentage: 0.95, kwhPrice: 0.85, hsp: 5.5, costPerKwp: 5700, lat: -12.97, lon: -38.50 },
-      pr: { savingsPercentage: 0.88, kwhPrice: 0.80, hsp: 4.4, costPerKwp: 6200, lat: -25.42, lon: -49.27 },
-      rs: { savingsPercentage: 0.85, kwhPrice: 0.78, hsp: 4.2, costPerKwp: 6300, lat: -30.03, lon: -51.23 },
-      go: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850, lat: -16.68, lon: -49.26 },
-      df: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, costPerKwp: 5850, lat: -15.78, lon: -47.92 }
+      // Dados específicos por estado (valores ilustrativos, ajuste conforme a realidade do mercado).
+      sp: { savingsPercentage: 0.9, kwhPrice: 0.92, hsp: 4.6, lat: -23.55, lon: -46.63, costPerKwp: { residential: 5900, commercial: 5400, industrial: 5100, rural: 5700 } },
+      rj: { savingsPercentage: 0.92, kwhPrice: 0.98, hsp: 4.8, lat: -22.90, lon: -43.17, costPerKwp: { residential: 6100, commercial: 5600, industrial: 5300, rural: 5900 } },
+      mg: { savingsPercentage: 0.9, kwhPrice: 0.88, hsp: 5.2, lat: -19.92, lon: -43.93, costPerKwp: { residential: 5800, commercial: 5300, industrial: 5000, rural: 5600 } },
+      ba: { savingsPercentage: 0.95, kwhPrice: 0.85, hsp: 5.5, lat: -12.97, lon: -38.50, costPerKwp: { residential: 5700, commercial: 5200, industrial: 4900, rural: 5500 } },
+      pr: { savingsPercentage: 0.88, kwhPrice: 0.80, hsp: 4.4, lat: -25.42, lon: -49.27, costPerKwp: { residential: 6200, commercial: 5700, industrial: 5400, rural: 6000 } },
+      rs: { savingsPercentage: 0.85, kwhPrice: 0.78, hsp: 4.2, lat: -30.03, lon: -51.23, costPerKwp: { residential: 6300, commercial: 5800, industrial: 5500, rural: 6100 } },
+      go: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, lat: -16.68, lon: -49.26, costPerKwp: { residential: 5850, commercial: 5350, industrial: 5050, rural: 5650 } },
+      df: { savingsPercentage: 0.93, kwhPrice: 0.86, hsp: 5.3, lat: -15.78, lon: -47.92, costPerKwp: { residential: 5850, commercial: 5350, industrial: 5050, rural: 5650 } }
     }
   };
 
-
+  // --- Estado da Calculadora ---
   // Objeto com resultados padrão para serem exibidos antes do primeiro cálculo.
-  // Garante que a seção de resultados não fique vazia ao carregar a página.
+  // Garante que a seção de resultados não fique vazia na primeira visita.
   const defaultCalculationResults = {
     monthlySavings: 315,
     systemSize: 6.5,
@@ -448,12 +466,13 @@ document.addEventListener('DOMContentLoaded', () => {
     totalSavings: 189000,
   };
 
-  // Variável que armazena os resultados do cálculo atual.
-  // Inicia com os valores padrão e é atualizada após cada cálculo.
+  // Armazena os resultados do cálculo atual. Inicia com valores padrão.
+  // É atualizado após cada cálculo e pode ser carregado do localStorage.
   let currentCalculatorResults = { ...defaultCalculationResults };
 
-  // Array de configuração para renderizar os cards de resultado de forma dinâmica.
-  // Cada objeto define um card: ícone, texto, como formatar o valor e classes de estilo.
+  // --- Configuração da Renderização dos Resultados ---
+  // Define como cada card de resultado será exibido na interface.
+  // Facilita a adição, remoção ou alteração de cards de resultado sem tocar na lógica de renderização.
   const resultItemsConfig = [
     {
       icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-solar-gold"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
@@ -490,14 +509,13 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   /**
-   * Renderiza os resultados do cálculo na interface do usuário.
-   * @param {object} results - O objeto contendo os dados do cálculo (monthlySavings, systemSize, etc.).
+   * Renderiza os cards de resultado na interface do usuário.
+   * @param {object} results - O objeto contendo os dados do cálculo (ex: monthlySavings, systemSize).
    */
   const renderCalculatorResults = (results) => {
-    // Verifica se o container de resultados existe no HTML.
     if (!calculatorResultsDiv) return;
 
-    // Gera o HTML para cada card de resultado, iterando sobre o array de configuração.
+    // Gera o HTML para cada card de resultado usando o array de configuração.
     calculatorResultsDiv.innerHTML = resultItemsConfig.map((item) => `
       <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4">
         <div class="${item.bg} p-3 rounded-lg">
@@ -528,89 +546,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /**
    * Função principal que executa a lógica de cálculo da economia.
-   * É chamada quando o usuário clica no botão "Calcular Economia".
+   * É uma função assíncrona para poder usar 'await' na chamada da API.
    */
   const calculateSavings = async () => {
-    // 1. Coleta e converte os valores dos campos do formulário.
+    // ETAPA 1: COLETA E VALIDAÇÃO DOS DADOS DO FORMULÁRIO
     const monthlyBill = parseFloat(monthlyBillInput.value) || 0;
     const propertyType = propertyTypeSelect.value;
     const roofArea = parseFloat(roofAreaInput.value) || 0;
-    const location = locationSelect.value; // Captura a sigla do estado (ex: 'sp', 'rj').
+    const location = locationSelect.value;
 
-    // 2. Validação: Verifica se todos os campos obrigatórios foram preenchidos.
     if (!monthlyBill || !propertyType || !roofArea || !location) {
-      console.error('Por favor, preencha todos os campos para calcular sua economia.');
-      // Poderia exibir uma mensagem de erro para o usuário aqui.
+      alert('Por favor, preencha todos os campos para uma simulação precisa.');
       return;
     }
 
-    // 3. Seleciona as taxas corretas com base no estado escolhido.
-    // Se o estado (location) não for encontrado em `calculatorConfig.rates`, usa as taxas `default`.
+    // ETAPA 2: SELEÇÃO DOS PARÂMETROS REGIONAIS
+    // Usa as taxas do estado selecionado ou as taxas padrão se o estado não for encontrado.
     const stateRates = calculatorConfig.rates[location] || calculatorConfig.rates.default;
 
-    // 4. Executa os cálculos com base nos parâmetros realistas.
-    // a. Estima o consumo mensal de energia em kWh.
+    // ETAPA 3: CÁLCULO DA GERAÇÃO DE ENERGIA
+    // Estima o consumo mensal em kWh a partir do valor da conta.
     const monthlyConsumptionKwh = monthlyBill / stateRates.kwhPrice;
-    let idealSystemSize;
-    let avgMonthlyGenerationPerKwp; // Variável para armazenar a geração por kWp
+    let avgMonthlyGenerationPerKwp; // kWh gerados por mês por cada 1 kWp de painel.
 
-    // Tenta usar a API se estiver habilitada e a chave for fornecida
+    // Tenta usar a API PVWatts para um cálculo mais preciso da geração.
     if (calculatorApiConfig.useApi && calculatorApiConfig.apiKey !== "YOUR_NREL_API_KEY") {
       try {
-        console.log("Iniciando cálculo com a API PVWatts...");
-        const tiltValue = Math.abs(stateRates.lat).toFixed(1);
-        const apiUrl = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${calculatorApiConfig.apiKey}&lat=${stateRates.lat}&lon=${stateRates.lon}&system_capacity=1&azimuth=180&tilt=${tiltValue}&array_type=1&module_type=0&losses=14&dataset=intl`;
+        console.log("Usando API PVWatts para cálculo de geração...");
+        const tiltValue = Math.abs(stateRates.lat).toFixed(1); // Inclinação ótima baseada na latitude.
+        const apiUrl = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${calculatorApiConfig.apiKey}&lat=${stateRates.lat}&lon=${stateRates.lon}&system_capacity=1&azimuth=0&tilt=${tiltValue}&array_type=1&module_type=0&losses=14&dataset=intl`;
         
         const response = await fetch(apiUrl);
         const data = await response.json();
 
-        if (!response.ok) {
-          const errorMessage = data.errors ? data.errors.join(', ') : `API Error: ${response.status}`;
-          throw new Error(errorMessage);
-        }
+        if (!response.ok) throw new Error(data.errors ? data.errors.join(', ') : `API Error: ${response.status}`);
+        
+        // Calcula a média mensal a partir dos dados anuais da API.
+        const totalAnnualGeneration = data.outputs.ac_monthly.reduce((sum, month) => sum + month, 0);
+        avgMonthlyGenerationPerKwp = totalAnnualGeneration / 12;
 
-        if (data.outputs && data.outputs.ac_monthly) {
-          const totalAnnualGeneration = data.outputs.ac_monthly.reduce((sum, month) => sum + month, 0);
-          avgMonthlyGenerationPerKwp = totalAnnualGeneration / 12;
-          idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
-        } else {
-          throw new Error("Resposta da API inválida.");
-        }
       } catch (error) {
-        console.warn(`Falha ao usar a API PVWatts: ${error.message}. Usando o cálculo manual com HSP.`);
+        // Se a API falhar, usa o método de cálculo manual como fallback.
+        console.warn(`Falha na API PVWatts: ${error.message}. Usando cálculo manual (HSP).`);
         avgMonthlyGenerationPerKwp = stateRates.hsp * 30;
-        idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
       }
     } else {
-      console.log("Iniciando cálculo manual com HSP...");
+      // Usa o cálculo manual se a API estiver desativada.
+      console.log("Usando cálculo manual (HSP) para geração...");
       avgMonthlyGenerationPerKwp = stateRates.hsp * 30;
-      idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
     }
 
+    // ETAPA 4: DIMENSIONAMENTO DO SISTEMA E LIMITAÇÃO POR ÁREA
+    // Calcula o tamanho ideal do sistema para cobrir o consumo.
+    let idealSystemSize = monthlyConsumptionKwh / avgMonthlyGenerationPerKwp;
+    // Calcula o tamanho máximo que cabe no telhado.
     const maxSystemSizeByArea = roofArea / calculatorConfig.areaPerKwp;
 
-    // d. Lógica de limitação refatorada para ser mais direta e robusta.
     const isLimitedByArea = idealSystemSize > maxSystemSizeByArea;
-    let systemSize = idealSystemSize; // Começa com o tamanho ideal
+    // O tamanho final do sistema é o ideal, a menos que seja limitado pela área.
+    let systemSize = isLimitedByArea ? maxSystemSizeByArea : idealSystemSize;
 
     if (isLimitedByArea) {
-      // Se for limitado, sobrescreve o tamanho do sistema com o máximo que a área permite.
-      console.warn(`O sistema foi limitado pela área do telhado. Tamanho ideal: ${idealSystemSize.toFixed(1)} kWp, Tamanho máximo pela área: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
-      systemSize = maxSystemSizeByArea;
+      console.warn(`Sistema limitado pela área do telhado. Ideal: ${idealSystemSize.toFixed(1)} kWp, Máximo: ${maxSystemSizeByArea.toFixed(1)} kWp.`);
     }
 
-    // e. Cálculos finais baseados no tamanho de sistema realista (systemSize).
-    const investment = Math.ceil(systemSize) * stateRates.costPerKwp;
+    // ETAPA 5: CÁLCULOS FINANCEIROS
+    // Seleciona o custo por kWp correto com base no tipo de propriedade.
+    const costPerKwpForType = stateRates.costPerKwp[propertyType] || stateRates.costPerKwp.residential;
+    const investment = Math.ceil(systemSize) * costPerKwpForType;
     let monthlySavings = monthlyBill * stateRates.savingsPercentage;
 
+    // Se o sistema foi limitado pela área, a economia também deve ser recalculada para ser realista.
     if (isLimitedByArea) {
-      // Se o sistema foi limitado, a economia mensal também deve ser recalculada.
       monthlySavings = (systemSize * avgMonthlyGenerationPerKwp) * stateRates.kwhPrice;
     }
 
     const paybackYears = (investment > 0 && monthlySavings > 0) ? investment / (monthlySavings * 12) : 0;
     const totalSavings = monthlySavings * 12 * calculatorConfig.systemLifespanYears;
 
+    // ETAPA 6: ATUALIZAÇÃO DO ESTADO E DA INTERFACE
+    // Armazena os novos resultados no objeto de estado.
     currentCalculatorResults = {
       monthlySavings,
       systemSize: systemSize,
@@ -619,44 +634,47 @@ document.addEventListener('DOMContentLoaded', () => {
       totalSavings,
     };
     
-    // 6. Salva os resultados no localStorage do navegador.
-    // Isso permite que os resultados persistam se o usuário recarregar a página.
+    // Salva os resultados no localStorage para persistência entre sessões.
     localStorage.setItem('solarCalculatorResults', JSON.stringify(currentCalculatorResults));
     
-    // 7. Chama a função para renderizar os novos resultados na tela.
+    // Renderiza os novos resultados na tela.
     renderCalculatorResults(currentCalculatorResults);
   };
 
-  // Adiciona um "ouvinte de evento" ao botão de calcular.
-  // Quando o botão é clicado, a função `calculateSavings` é executada.
+  // --- INICIALIZAÇÃO DA CALCULADORA ---
+
+  // Adiciona o listener de evento ao botão para acionar o cálculo.
   if (calculateSavingsButton) {
     calculateSavingsButton.addEventListener('click', calculateSavings);
   }
 
-  // Tenta carregar os resultados do último cálculo salvo no localStorage.
+  // Tenta carregar os resultados do último cálculo salvo no localStorage ao carregar a página.
   const cachedResult = localStorage.getItem('solarCalculatorResults');
   if (cachedResult) {
     try {
       const parsedResult = JSON.parse(cachedResult);
-      // Validação para garantir que o objeto do cache é válido antes de usá-lo.
-      // Isso previne erros se os dados no localStorage estiverem corrompidos, nulos ou incompletos.
+      // Valida se os dados do cache são válidos antes de usá-los.
       if (parsedResult && typeof parsedResult.monthlySavings === 'number' && typeof parsedResult.totalSavings === 'number') {
         currentCalculatorResults = parsedResult;
       } else {
-        // Se os dados forem inválidos, reverte para o padrão e limpa o cache para evitar futuros erros.
-        console.warn('Cached calculator results are invalid. Using default values and clearing cache.');
+        // Se os dados forem inválidos, reverte para o padrão e limpa o cache.
+        console.warn('Dados do cache da calculadora são inválidos. Usando valores padrão.');
         currentCalculatorResults = { ...defaultCalculationResults };
         localStorage.removeItem('solarCalculatorResults');
       }
     } catch (error) {
-      // Se houver um erro na conversão (JSON inválido), usa os resultados padrão e limpa o cache.
-      console.error('Error parsing cached results:', error);
+      // Se houver um erro na conversão (JSON inválido), usa os resultados padrão.
+      console.error('Erro ao analisar dados do cache da calculadora:', error);
       currentCalculatorResults = { ...defaultCalculationResults };
       localStorage.removeItem('solarCalculatorResults');
     }
   }
   // Renderiza os resultados na tela ao carregar a página (sejam os salvos ou os padrão).
   renderCalculatorResults(currentCalculatorResults);
+
+  // ===================================================================================
+  // FIM DA LÓGICA DA CALCULADORA DE ECONOMIA
+  // ===================================================================================
 
   const countUpElements = document.querySelectorAll('.count-up');
 
